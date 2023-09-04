@@ -15,23 +15,31 @@ public class OddRepository : IOddRepository
 
     public Match Patch(int MatchId, int TeamId, string BetValue)
     {
-        Match matchDb = _context.Matches.FirstOrDefault(m => m.MatchId == MatchId)!;
-
-        if (matchDb == null) throw new Exception("Match not founded");
-
+        Match dbMatch = _context.Matches.FirstOrDefault(m => m.MatchId == MatchId)!;
+        if (dbMatch == null) throw new Exception("Match not founded");
         Team findedTeam = _context.Teams.FirstOrDefault(t => t.TeamId == TeamId)!;
         if (findedTeam == null) throw new Exception("Team not founded");
+        string newBetValue = BetValue.Replace(",", ".");
+        if (dbMatch.MatchTeamAId != TeamId && dbMatch.MatchTeamBId != TeamId) throw new Exception("Team is not in this match");
+        if (dbMatch.MatchTeamAId == TeamId) dbMatch.MatchTeamAValue += decimal.Parse(newBetValue, CultureInfo.InvariantCulture);
+        else dbMatch.MatchTeamBValue += decimal.Parse(newBetValue, CultureInfo.InvariantCulture);
 
-        if (matchDb.MatchFinished) throw new Exception("Match finished");
-
-        if (matchDb.MatchTeamAId != TeamId && matchDb.MatchTeamBId != TeamId) throw new Exception("Team is not in this match");
-
-        if (matchDb.MatchTeamAId == TeamId) matchDb.MatchTeamAValue += decimal.Parse(BetValue);
-        else matchDb.MatchTeamBValue += decimal.Parse(BetValue);
-
-        _context.Matches.Update(matchDb);
+        _context.Matches.Update(dbMatch);
         _context.SaveChanges();
 
-        return matchDb;
+        return new Match
+        {
+            MatchId = MatchId,
+            MatchDate = dbMatch.MatchDate,
+            MatchTeamAId = dbMatch.MatchTeamAId,
+            MatchTeamBId = dbMatch.MatchTeamBId,
+            MatchTeamAValue = dbMatch.MatchTeamAValue,
+            MatchTeamBValue = dbMatch.MatchTeamBValue,
+            MatchFinished = dbMatch.MatchFinished,
+            MatchWinnerId = dbMatch.MatchWinnerId,
+            MatchTeamA = null,
+            MatchTeamB = null,
+            Bets = null,
+        };
     }
 }

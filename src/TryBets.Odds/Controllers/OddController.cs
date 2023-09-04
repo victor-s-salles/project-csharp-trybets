@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Claims;
+using TryBets.Odds.Models;
 using TryBets.Odds.Repository;
 
 namespace TryBets.Odds.Controllers;
@@ -22,11 +23,13 @@ public class OddController : Controller
     {
         try
         {
-            return Ok(_repository.Patch(MatchId, TeamId, BetValue));
+            Match response = _repository.Patch(MatchId, TeamId, BetValue);
+            return Ok(response);
+
         }
-        catch (Exception ex)
+        catch (Exception err)
         {
-            return BadRequest(new { message = ex.Message });
+            return BadRequest(new { message = err.Message });
         }
     }
 }
