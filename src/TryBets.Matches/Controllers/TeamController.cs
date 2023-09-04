@@ -18,6 +18,6 @@ public class TeamController : Controller
     [HttpGet]
     public IActionResult Get()
     {
-        return Ok(_repository.Get())
+        return Ok(_repository.Get());
     }
 }

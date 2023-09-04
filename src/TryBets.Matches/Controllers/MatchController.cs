@@ -16,6 +16,6 @@ public class MatchController : Controller
     [HttpGet("{MatchFinished}")]
     public IActionResult Get(bool MatchFinished)
     {
-        return Ok(_repository.Get(MatchFinished))
+        return Ok(_repository.Get(MatchFinished));
     }
 }
