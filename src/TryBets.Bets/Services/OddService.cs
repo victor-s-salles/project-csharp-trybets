@@ -11,6 +11,14 @@ public class OddService : IOddService
 
     public async Task<object> UpdateOdd(int MatchId, int TeamId, decimal BetValue)
     {
-        throw new NotImplementedException();
+        string URL = $"http://localhost:5504/odd/{MatchId}/{TeamId}/{BetValue}";
+        using (HttpResponseMessage response = await _client.PatchAsync(URL, null))
+        {
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
+        return null;
     }
 }
